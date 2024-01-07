@@ -24,7 +24,19 @@ const defaultCookieOptions: SessionIdStorageStrategy["cookie"] = {
 
 const defaultSessionStorage = createCookieSessionStorageFactory(createCookie)({ cookie: defaultCookieOptions });
 
-export function createRemixToast(cookieOptions: SessionIdStorageStrategy["cookie"] = defaultCookieOptions) {
+export function createRemixToast(cookieOptions: SessionIdStorageStrategy["cookie"] = defaultCookieOptions): {
+  jsonWithToast: typeof jsonWithToast;
+  jsonWithSuccess: typeof jsonWithSuccess;
+  jsonWithError: typeof jsonWithError;
+  jsonWithInfo: typeof jsonWithInfo;
+  jsonWithWarning: typeof jsonWithWarning;
+  redirectWithToast: typeof redirectWithToast;
+  redirectWithSuccess: typeof redirectWithSuccess;
+  redirectWithError: typeof redirectWithError;
+  redirectWithInfo: typeof redirectWithInfo;
+  redirectWithWarning: typeof redirectWithWarning;
+  getToast: typeof getToast;
+} {
   const cookieOptionsWithDefaults: SessionIdStorageStrategy["cookie"] = {
     ...defaultCookieOptions,
     ...cookieOptions,
@@ -34,37 +46,37 @@ export function createRemixToast(cookieOptions: SessionIdStorageStrategy["cookie
   const sessionStorage = createCookieSessionStorage({ cookie: cookieOptionsWithDefaults });
 
   return {
-    jsonWithToast<T>(data: T, toast: ToastMessage, init?: ResponseInit) {
-      return jsonWithToast(data, toast, init, sessionStorage);
+    jsonWithToast(data, message, init) {
+      return jsonWithToast(data, message, init, sessionStorage);
     },
-    jsonWithSuccess<T>(data: T, message: string, init?: ResponseInit) {
+    jsonWithSuccess(data, message, init) {
       return jsonWithSuccess(data, message, init, sessionStorage);
     },
-    jsonWithError<T>(data: T, message: string, init?: ResponseInit) {
+    jsonWithError(data, message, init) {
       return jsonWithError(data, message, init, sessionStorage);
     },
-    jsonWithInfo<T>(data: T, message: string, init?: ResponseInit) {
+    jsonWithInfo(data, message, init) {
       return jsonWithInfo(data, message, init, sessionStorage);
     },
-    jsonWithWarning<T>(data: T, message: string, init?: ResponseInit) {
+    jsonWithWarning(data, message, init) {
       return jsonWithWarning(data, message, init, sessionStorage);
     },
-    redirectWithToast(url: string, toast: ToastMessage, init?: ResponseInit) {
+    redirectWithToast(url, toast, init) {
       return redirectWithToast(url, toast, init, sessionStorage);
     },
-    redirectWithSuccess(url: string, message: string, init?: ResponseInit) {
+    redirectWithSuccess(url, message, init) {
       return redirectWithSuccess(url, message, init, sessionStorage);
     },
-    redirectWithError(url: string, message: string, init?: ResponseInit) {
+    redirectWithError(url, message, init) {
       return redirectWithError(url, message, init, sessionStorage);
     },
-    redirectWithInfo(url: string, message: string, init?: ResponseInit) {
+    redirectWithInfo(url, message, init) {
       return redirectWithInfo(url, message, init, sessionStorage);
     },
-    redirectWithWarning(url: string, message: string, init?: ResponseInit) {
+    redirectWithWarning(url, message, init) {
       return redirectWithWarning(url, message, init, sessionStorage);
     },
-    getToast(request: Request) {
+    getToast(request) {
       return getToast(request, sessionStorage);
     },
   };
@@ -118,6 +130,7 @@ export async function jsonWithFlash<T>(
  * @param data Generic object containing the data
  * @param toast Toast message and it's type
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns data with toast cookie set
  */
 export function jsonWithToast<T>(
@@ -135,6 +148,7 @@ export function jsonWithToast<T>(
  * @param data The data to be included in the response.
  * @param message The message for the success toast notification.
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns a JSON response object with the specified success toast message.
  */
 export function jsonWithSuccess<T>(
@@ -152,6 +166,7 @@ export function jsonWithSuccess<T>(
  * @param data The data to be included in the response.
  * @param message The message for the error toast notification.
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns a JSON response object with the specified error toast message.
  */
 export function jsonWithError<T>(
@@ -169,6 +184,7 @@ export function jsonWithError<T>(
  * @param data The data to be included in the response.
  * @param message The message for the info toast notification.
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns a JSON response object with the specified info toast message.
  */
 export function jsonWithInfo<T>(
@@ -186,6 +202,7 @@ export function jsonWithInfo<T>(
  * @param data The data to be included in the response.
  * @param message The message for the warning toast notification.
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns a JSON response object with the specified warning toast message.
  */
 export function jsonWithWarning<T>(
@@ -204,6 +221,7 @@ export function jsonWithWarning<T>(
  * @param url Redirect URL
  * @param toast Toast message and it's type
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns redirect response with toast cookie set
  */
 export function redirectWithToast(
@@ -221,6 +239,7 @@ export function redirectWithToast(
  * @param redirectUrl Redirect url
  * @param message Message to be shown as info
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns redirect response with toast cookie set
  */
 export function redirectWithError(
@@ -239,6 +258,7 @@ export function redirectWithError(
  * @param redirectUrl Redirect url
  * @param message Message to be shown as info
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns redirect response with toast cookie set
  */
 export function redirectWithSuccess(
@@ -257,6 +277,7 @@ export function redirectWithSuccess(
  * @param redirectUrl Redirect url
  * @param message Message to be shown as info
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns redirect response with toast cookie set
  */
 export function redirectWithWarning(
@@ -275,6 +296,7 @@ export function redirectWithWarning(
  * @param redirectUrl Redirect url
  * @param message Message to be shown as info
  * @param init Additional response options (status code, additional headers etc)
+ * @param sessionStorage Session Storage to be used
  * @returns Returns redirect response with toast cookie set
  */
 export function redirectWithInfo(
@@ -289,6 +311,7 @@ export function redirectWithInfo(
 /**
  * Helper method used to get the toast data from the current request and purge the flash storage from the session
  * @param request Current request
+ * @param sessionStorage Session Storage to be used
  * @returns Returns the the toast notification if exists, undefined otherwise and the headers needed to purge it from the session
  */
 export async function getToast(
